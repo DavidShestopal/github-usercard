@@ -3,6 +3,19 @@
            https://api.github.com/users/<your name>
 */
 
+axios
+  .get('https://api.github.com/users/DavidShestopal')
+
+  .then(response => {
+    console.log(response);
+    const entryPoint = document.querySelector('.cards');
+    console.log(entryPoint);
+    entryPoint.appendChild(cardCreator(response));
+  })
+  .catch(error => {
+    console.log('data not returned', error);
+  });
+
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
    data in order to use it to build your component function 
@@ -24,8 +37,22 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = ['josiahroa18', 'ajablanco', 'NataliaBeckstead', 'kkslider2130', '	mmussel'];
 
+followersArray.forEach(user => {
+  axios
+    .get(`https://api.github.com/users/${user}`)
+
+    .then(response => {
+      console.log(response);
+      const entryPoint = document.querySelector('.cards');
+      console.log(entryPoint);
+      entryPoint.appendChild(cardCreator(response));
+    })
+    .catch(error => {
+      console.log('data not returned', error);
+    });
+});
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
 
@@ -53,3 +80,46 @@ const followersArray = [];
   luishrd
   bigknell
 */
+// created the lego pieces
+const cardCreator = response => {
+  let newCard = document.createElement('div');
+  let newImage = document.createElement('img');
+  let newInfoCard = document.createElement('div');
+  let newName = document.createElement('h3');
+  let newUsername = document.createElement('p');
+  let newLocation = document.createElement('p');
+  let newProfile = document.createElement('p');
+  let newUrl = document.createElement('a');
+  let newFollowers = document.createElement('p');
+  let newFollowing = document.createElement('p');
+  let newBio = document.createElement('p');
+  // glued the lego pieces
+  newCard.appendChild(newImage);
+  newCard.appendChild(newInfoCard);
+  newInfoCard.appendChild(newName);
+  newInfoCard.appendChild(newUsername);
+  newInfoCard.appendChild(newLocation);
+  newInfoCard.appendChild(newProfile);
+  newProfile.appendChild(newUrl);
+  newInfoCard.appendChild(newFollowers);
+  newInfoCard.appendChild(newFollowing);
+  newInfoCard.appendChild(newBio);
+  // added the classes
+  newCard.classList.add('card');
+  newInfoCard.classList.add('card-info');
+  newUsername.classList.add('username');
+  // added the content
+  newImage.setAttribute('src', response.data.avatar_url);
+  newName.textContent = response.data.name;
+  newUsername.textContent = response.data.login;
+  newLocation.textContent = `Location:  ${response.data.location}`;
+  newProfile.textContent = 'Profile:  ';
+  newUrl.textContent = `${response.data.html_url}`;
+  newUrl.setAttribute('href', response.data.html_url);
+  newUrl.setAttribute('target', '_blank');
+  newFollowers.textContent = `Followers: ${response.data.followers}`;
+  newFollowing.textContent = `Following: ${response.data.following}`;
+  newBio.textContent = `Bio: ${response.data.bio}`;
+
+  return newCard;
+};
